@@ -29,5 +29,12 @@ void loop()
     Serial.println(" CRC ERR");
   }
 
+  char buffer[32];
+  memset(buffer, 0, 32);
+
+  DCTime::timeDatagramToString(datagram, buffer);
+
+  Serial.println(buffer);
+
   delay(1000);
 }

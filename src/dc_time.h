@@ -22,6 +22,7 @@ private:
     static void buildHeader(uint8_t *datagram, uint8_t datagramId, uint8_t datagramLength);
 public:
     static void buildTimeDatagram(uint8_t hour, uint8_t minute, uint8_t second, uint8_t day, uint8_t month, uint8_t year, uint8_t *datagram);    
+    static void timeDatagramToString(uint8_t *datagram, char *buffer);
     static bool verifyCRC(uint8_t *datagram);
 };
 
