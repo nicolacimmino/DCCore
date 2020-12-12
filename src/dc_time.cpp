@@ -2,52 +2,64 @@
 
 void DCTime::buildTimeDatagram(uint8_t hour, uint8_t minute, uint8_t second, uint8_t day, uint8_t month, uint8_t year, uint8_t *datagram)
 {
-    datagram[0] = DC_TIME_DATAGRAM_ID;
-    datagram[1] = hour;
-    datagram[2] = minute;
-    datagram[3] = second;
-    datagram[4] = day;
-    datagram[5] = month;
-    datagram[6] = year;
+    DCTime::buildHeader(datagram, DC_TIME_DATAGRAM_ID, DC_TIME_DATAGRAM_LEN);
 
-    DCTime::appendCRC(datagram, 7);
+    datagram[DC_DATAGRAM_HEADER_LEN] = hour;
+    datagram[DC_DATAGRAM_HEADER_LEN + 1] = minute;
+    datagram[DC_DATAGRAM_HEADER_LEN + 2] = second;
+    datagram[DC_DATAGRAM_HEADER_LEN + 3] = day;
+    datagram[DC_DATAGRAM_HEADER_LEN + 4] = month;
+    datagram[DC_DATAGRAM_HEADER_LEN + 5] = year;
+
+    DCTime::addCRC(datagram);
 }
 
-void DCTime::appendCRC(uint8_t *datagram, uint8_t crcStartOffset)
+void DCTime::buildHeader(uint8_t *datagram, uint8_t datagramId, uint8_t datagramLength)
+{
+    datagram[0] = datagramId;
+    datagram[DC_DATAGRAM_HEADER_LEN_OFFSET] = datagramLength;
+}
+
+uint32_t DCTime::calculateCRC(uint8_t *datagram)
 {
     CRC32 crc;
-    for (uint8_t ix = 0; ix < crcStartOffset; ix++)
+    for (uint8_t ix = DC_DATAGRAM_HEADER_LEN; ix < datagram[DC_DATAGRAM_HEADER_LEN_OFFSET]; ix++)
     {
         crc.update(datagram[ix]);
     }
 
-    uint32_t checksum = crc.finalize();
+    return crc.finalize();
+}
 
-    for (uint8_t ix = crcStartOffset; ix < crcStartOffset + 4; ix++)
+void DCTime::addCRC(uint8_t *datagram)
+{
+    uint32_t checksum = DCTime::calculateCRC(datagram);
+
+    for (uint8_t ix = DC_DATAGRAM_HEADER_CRC_OFFSET; ix < DC_DATAGRAM_HEADER_CRC_OFFSET + 4; ix++)
     {
         datagram[ix] = checksum & 0xFF;
         checksum = checksum >> 8;
     }
 }
 
-bool DCTime::verifyCRC(uint8_t *datagram, uint8_t datagramLength)
+bool DCTime::verifyCRC(uint8_t *datagram)
 {
-  CRC32 crc;
-  for (uint8_t ix = 0; ix < datagramLength - 4; ix++)
-  {
-    crc.update(datagram[ix]);
-  }
-
-  uint32_t checksum = crc.finalize();
-  
-  for (uint8_t ix = datagramLength - 4; ix < datagramLength; ix++)
-  {
-    if (datagram[ix] != (checksum & 0xFF))
+    CRC32 crc;
+    for (uint8_t ix = DC_DATAGRAM_HEADER_LEN; ix < datagram[DC_DATAGRAM_HEADER_LEN_OFFSET]; ix++)
     {
-      return false;
+        crc.update(datagram[ix]);
     }
-    checksum = checksum >> 8;
-  }
 
-  return true;
+    uint32_t checksum = crc.finalize();
+
+    for (uint8_t ix = DC_DATAGRAM_HEADER_CRC_OFFSET; ix < DC_DATAGRAM_HEADER_CRC_OFFSET + 4; ix++)
+    {
+        if (datagram[ix] != (checksum & 0xFF))
+        {
+            return false;
+        }
+        checksum = checksum >> 8;
+    }
+
+    return true;
 }

@@ -10,9 +10,9 @@ void setup()
 void loop()
 {
   uint8_t datagram[DC_TIME_DATAGRAM_LEN];
-  DCTime::buildTimeDatagram(10, 22, 33, 11, 12, 20, datagram);
+  DCTime::buildTimeDatagram(10, 22, (millis() / 1000) % 60, 11, 12, 20, datagram);
 
-  for (uint8_t ix = 0; ix < DC_TIME_DATAGRAM_LEN; ix++)
+  for (uint8_t ix = 0; ix < datagram[DC_DATAGRAM_HEADER_LEN_OFFSET]; ix++)
   {
     Serial.print(datagram[ix], HEX);
     Serial.print(".");
@@ -20,7 +20,7 @@ void loop()
 
   Serial.print(" - ");
 
-  if (DCTime::verifyCRC(datagram, DC_TIME_DATAGRAM_LEN))
+  if (DCTime::verifyCRC(datagram))
   {
     Serial.println(" CRC OK");
   }
