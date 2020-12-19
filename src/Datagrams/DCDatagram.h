@@ -19,6 +19,7 @@ protected:
     static void buildHeader(uint8_t *datagram, uint8_t datagramId, uint8_t datagramLength);
 public:
     static bool verifyCRC(uint8_t *datagram);
+    static bool isA(uint8_t *datagram, uint8_t type);
 };
 
 #endif

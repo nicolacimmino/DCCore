@@ -49,3 +49,8 @@ bool DCDatagram::verifyCRC(uint8_t *datagram)
 
     return true;
 }
+
+bool DCDatagram::isA(uint8_t *datagram, uint8_t type)
+{
+    return datagram[0] == type;
+}
