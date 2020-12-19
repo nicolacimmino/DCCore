@@ -16,12 +16,12 @@ void DCTimeDatagram::buildTimeDatagram(uint8_t hour, uint8_t minute, uint8_t sec
 
 static uint8_t DCTimeDatagram::getYear(uint8_t *datagram)
 {
-    return datagram[DC_DATAGRAM_HEADER_LEN];
+    return datagram[DC_DATAGRAM_HEADER_LEN] & 0x7F;
 }
 
 static uint8_t DCTimeDatagram::getMonth(uint8_t *datagram)
 {
-    return datagram[DC_DATAGRAM_HEADER_LEN + 1];
+    return datagram[DC_DATAGRAM_HEADER_LEN + 1] & 0x0F;
 }
 
 static uint8_t DCTimeDatagram::getDayOfWeek(uint8_t *datagram)
@@ -36,15 +36,15 @@ static uint8_t DCTimeDatagram::getDay(uint8_t *datagram)
 
 static uint8_t DCTimeDatagram::getHour(uint8_t *datagram)
 {
-    return datagram[DC_DATAGRAM_HEADER_LEN + 3];
+    return datagram[DC_DATAGRAM_HEADER_LEN + 3] & 0x1F;
 }
 
 static uint8_t DCTimeDatagram::getMinute(uint8_t *datagram)
 {
-    return datagram[DC_DATAGRAM_HEADER_LEN + 4];
+    return datagram[DC_DATAGRAM_HEADER_LEN + 4] & 0x3F;
 }
 
 static uint8_t DCTimeDatagram::getSecond(uint8_t *datagram)
 {
-    return datagram[DC_DATAGRAM_HEADER_LEN + 5];
+    return datagram[DC_DATAGRAM_HEADER_LEN + 5] & 0x3F;
 }
