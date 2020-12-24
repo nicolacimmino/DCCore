@@ -5,15 +5,32 @@ DCServices *dcServices;
 void setup()
 {
   Serial.begin(9600);
-  dcServices = new DCServices(DC_RADIO_NRF24_V2);
+  dcServices = new DCServices(DC_RADIO_NRF24_V3);
 }
 
 void loop()
 {
-  if(dcServices->syncRTCToTimeBroadcast())
+  DateTime *dateTime = new DateTime();
+
+  if (dcServices->receiveTimeBroadcast(dateTime))
   {
-    Serial.println("Sync OK");
+    char buf[64];
+    sprintf(buf, "20%02d%02d%02dT%02d:%02d:%02d",        
+        dateTime->year,
+        dateTime->month,
+        dateTime->day,                
+        dateTime->hour,
+        dateTime->minute,
+        dateTime->second
+        );
+    Serial.println(buf);
+  }
+  else
+  {
+    Serial.println("Error");
   }
 
-  delay(1000);
+  delete dateTime;
+
+  delay(200);
 }

@@ -28,17 +28,30 @@
 #define TIME_BROADCAST_CHANNEL 64
 #define DC_SERVICES_EXTENDED_PREAMBLE 64123
 
+struct DateTime
+{
+    uint8_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
+    uint8_t dayOfWeek;
+    bool dst;
+    bool leap;
+};
+
 class DCServices
 {
 private:
     RadioDriver *radio;
     uRTCLib *rtc;
+
 public:
     DCServices(uint8_t radioType, uRTCLib *rtc = NULL);
     void broadcastTime();
     bool syncRTCToTimeBroadcast();
+    bool receiveTimeBroadcast(DateTime *dateTime);
 };
 
 #endif
-
-

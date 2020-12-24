@@ -37,28 +37,53 @@ void DCServices::broadcastTime()
 
 bool DCServices::syncRTCToTimeBroadcast()
 {
+    if (this->rtc == NULL)
+    {
+        return false;
+    }
+
+    DateTime *dateTime = new DateTime();
+    bool success = false;
+
+    if (this->receiveTimeBroadcast(dateTime))
+    {
+        this->rtc->set(
+            dateTime->second,
+            dateTime->minute,
+            dateTime->hour,
+            dateTime->dayOfWeek,
+            dateTime->day,
+            dateTime->month,
+            dateTime->year);
+
+        success = true;
+    }
+
+    delete dateTime;
+
+    return success;
+}
+
+bool DCServices::receiveTimeBroadcast(DateTime *dateTime)
+{
     uint8_t datagram[DC_TIME_DATAGRAM_LEN];
 
     this->radio->setRFChannel(TIME_BROADCAST_CHANNEL);
 
     if (this->radio->receive(datagram, DC_TIME_DATAGRAM_LEN, 1000))
-    {        
+    {
         if (!DCDatagram::verifyCRC(datagram) || !DCDatagram::isA(datagram, DC_TIME_DATAGRAM_ID))
         {
             return false;
         }
 
-        if (this->rtc != NULL)
-        {
-            this->rtc->set(
-                DCTimeDatagram::getSecond(datagram),
-                DCTimeDatagram::getMinute(datagram),
-                DCTimeDatagram::getHour(datagram),
-                DCTimeDatagram::getDayOfWeek(datagram),
-                DCTimeDatagram::getDay(datagram),
-                DCTimeDatagram::getMonth(datagram),
-                DCTimeDatagram::getYear(datagram));
-        }
+        dateTime->second = DCTimeDatagram::getSecond(datagram);
+        dateTime->minute = DCTimeDatagram::getMinute(datagram);
+        dateTime->hour = DCTimeDatagram::getHour(datagram);
+        dateTime->dayOfWeek = DCTimeDatagram::getDayOfWeek(datagram);
+        dateTime->day = DCTimeDatagram::getDay(datagram);
+        dateTime->month = DCTimeDatagram::getMonth(datagram);
+        dateTime->year = DCTimeDatagram::getYear(datagram);
 
         return true;
     }

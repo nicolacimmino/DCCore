@@ -25,6 +25,7 @@
 
 #define DC_RADIO_NRF24_V1 1
 #define DC_RADIO_NRF24_V2 2
+#define DC_RADIO_NRF24_V3 3
 
 class RadioDriverFactory
 {

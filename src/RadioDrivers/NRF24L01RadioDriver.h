@@ -39,12 +39,20 @@
 #define NRF24L01_SPI_BUFFER_SIZE 8
 
 // HW V1
+// This is a version I wirewrapped and is still in use in some
+//  of my projects.
 #define NRF24L01_CS_PIN_V1 10
 #define NRF24L01_CE_PIN_V1 9
 
 // HW V2
+// This is a variant (clone) of NanoRF
 #define NRF24L01_CS_PIN_V2 8
 #define NRF24L01_CE_PIN_V2 7
+
+// HW V3
+// This is the original nanoRF
+#define NRF24L01_CS_PIN_V3 9
+#define NRF24L01_CE_PIN_V3 10
 
 // Commands
 #define NRF24L01_R_REGISTER 0x00

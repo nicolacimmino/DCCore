@@ -46,6 +46,10 @@ NRF24L01RadioDriver::NRF24L01RadioDriver(byte hardwareVersion)
         this->csPin = NRF24L01_CS_PIN_V2;
         this->cePin = NRF24L01_CE_PIN_V2;
         break;
+    case 3:
+        this->csPin = NRF24L01_CS_PIN_V3;
+        this->cePin = NRF24L01_CE_PIN_V3;
+        break;        
     }
 
     this->initializeRadio();
