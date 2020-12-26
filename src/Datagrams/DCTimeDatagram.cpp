@@ -11,7 +11,7 @@ void DCTimeDatagram::buildTimeDatagram(uint8_t hour, uint8_t minute, uint8_t sec
     datagram[DC_DATAGRAM_HEADER_LEN + 4] = minute;
     datagram[DC_DATAGRAM_HEADER_LEN + 5] = second;
 
-    DCTimeDatagram::addCRC(datagram);
+    DCTimeDatagram::addHMAC(datagram);
 }
 
 static uint8_t DCTimeDatagram::getYear(uint8_t *datagram)

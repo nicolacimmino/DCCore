@@ -6,45 +6,47 @@ void DCDatagram::buildHeader(uint8_t *datagram, uint8_t datagramId, uint8_t data
     datagram[DC_DATAGRAM_HEADER_LEN_OFFSET] = datagramLength;
 }
 
-uint32_t DCDatagram::calculateCRC(uint8_t *datagram)
-{
-    CRC32 crc;
+uint32_t DCDatagram::calculateHMAC(uint8_t *datagram)
+{    
+    Sha256 *sha256 = new Sha256();
+
+    sha256->initHmac_EEPROM(DCCORE_EEPROM_HMAC_KEY, DCCORE_EEPROM_HMAC_KEY_LEN);
+
     for (uint8_t ix = DC_DATAGRAM_HEADER_LEN; ix < datagram[DC_DATAGRAM_HEADER_LEN_OFFSET]; ix++)
     {
-        crc.update(datagram[ix]);
+        sha256->write((uint8_t)datagram[ix]);
     }
 
-    return crc.finalize();
+    uint8_t *hash = sha256->resultHmac();
+    uint32_t hmac = hash[0] | (hash[8] << 8) | (hash[16] << 16) | (hash[24] << 24);
+
+    delete sha256;
+
+    return hmac;
 }
 
-void DCDatagram::addCRC(uint8_t *datagram)
+void DCDatagram::addHMAC(uint8_t *datagram)
 {
-    uint32_t checksum = DCDatagram::calculateCRC(datagram);
+    uint32_t hmac = DCDatagram::calculateHMAC(datagram);
 
-    for (uint8_t ix = DC_DATAGRAM_HEADER_CRC_OFFSET; ix < DC_DATAGRAM_HEADER_CRC_OFFSET + 4; ix++)
+    for (uint8_t ix = DC_DATAGRAM_HEADER_HMAC_OFFSET; ix < DC_DATAGRAM_HEADER_HMAC_OFFSET + 4; ix++)
     {
-        datagram[ix] = checksum & 0xFF;
-        checksum = checksum >> 8;
+        datagram[ix] = hmac & 0xFF;
+        hmac = hmac >> 8;
     }
 }
 
-bool DCDatagram::verifyCRC(uint8_t *datagram)
+bool DCDatagram::verifyHMAC(uint8_t *datagram)
 {
-    CRC32 crc;
-    for (uint8_t ix = DC_DATAGRAM_HEADER_LEN; ix < datagram[DC_DATAGRAM_HEADER_LEN_OFFSET]; ix++)
-    {
-        crc.update(datagram[ix]);
-    }
+    uint32_t hmac = DCDatagram::calculateHMAC(datagram);
 
-    uint32_t checksum = crc.finalize();
-
-    for (uint8_t ix = DC_DATAGRAM_HEADER_CRC_OFFSET; ix < DC_DATAGRAM_HEADER_CRC_OFFSET + 4; ix++)
+    for (uint8_t ix = DC_DATAGRAM_HEADER_HMAC_OFFSET; ix < DC_DATAGRAM_HEADER_HMAC_OFFSET + 4; ix++)
     {
-        if (datagram[ix] != (checksum & 0xFF))
+        if (datagram[ix] != (hmac & 0xFF))
         {
             return false;
         }
-        checksum = checksum >> 8;
+        hmac = hmac >> 8;
     }
 
     return true;

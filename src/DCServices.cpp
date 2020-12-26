@@ -72,7 +72,7 @@ bool DCServices::receiveTimeBroadcast(DateTime *dateTime)
 
     if (this->radio->receive(datagram, DC_TIME_DATAGRAM_LEN, 1000))
     {
-        if (!DCDatagram::verifyCRC(datagram) || !DCDatagram::isA(datagram, DC_TIME_DATAGRAM_ID))
+        if (!DCDatagram::verifyHMAC(datagram) || !DCDatagram::isA(datagram, DC_TIME_DATAGRAM_ID))
         {
             return false;
         }
