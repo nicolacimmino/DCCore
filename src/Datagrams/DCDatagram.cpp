@@ -18,7 +18,7 @@ uint32_t DCDatagram::calculateHMAC(uint8_t *datagram)
     }
 
     uint8_t *hash = sha256->resultHmac();
-    uint32_t hmac = hash[0] | (hash[8] << 8) | (hash[16] << 16) | (hash[24] << 24);
+    uint32_t hmac = hash[0] | ((uint32_t)hash[1] << 8) | ((uint32_t)hash[2] << 16) | ((uint32_t)hash[3] << 24);
 
     delete sha256;
 

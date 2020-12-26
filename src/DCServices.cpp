@@ -90,3 +90,10 @@ bool DCServices::receiveTimeBroadcast(DateTime *dateTime)
 
     return false;
 }
+
+bool DCServices::receiveRawDatagram(uint8_t channel, uint8_t *datagram, uint8_t datagramSize)
+{
+    this->radio->setRFChannel(channel);
+
+    return this->radio->receive(datagram, datagramSize, 1000);    
+}

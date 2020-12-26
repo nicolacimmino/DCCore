@@ -52,6 +52,7 @@ public:
     void broadcastTime();
     bool syncRTCToTimeBroadcast();
     bool receiveTimeBroadcast(DateTime *dateTime);
+    bool receiveRawDatagram(uint8_t channel, uint8_t *datagram, uint8_t datagramSize);
 };
 
 #endif
