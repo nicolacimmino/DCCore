@@ -18,7 +18,7 @@ Every datagram has a header. The header format does not change with the datagram
 
 **DLEN7..0** Datagram Length. Length in bytes of the datagram, including the whole header and payload.
 
-**HMAC31..0** Datagram signature. A signature calculated on the datagram payload and a secret key. The secret key is an 8-octet key shared among all devices and never transmitted across the netwrok. The HMAC (keyed-hash message authentication code) is a HMAC-SHA256 truncated to 4 octets.
+**HMAC31..0** Datagram signature. A signature calculated on the datagram payload, prefixed by all the header octets except the HMAC itself, and a secret key. The secret key is an 8-octet key shared among all devices and never transmitted across the netwrok. The HMAC (keyed-hash message authentication code) is a HMAC-SHA256 truncated to 4 octets.
 
 ## Time Datagram (0x20)
 
