@@ -95,5 +95,53 @@ bool DCServices::receiveRawDatagram(uint8_t channel, uint8_t *datagram, uint8_t 
 {
     this->radio->setRFChannel(channel);
 
-    return this->radio->receive(datagram, datagramSize, 1000);    
+    return this->radio->receive(datagram, datagramSize, 1000);
+}
+
+bool DCServices::loop()
+{
+    while (Serial.available())
+    {
+        if (Serial.read() == '!')
+        {
+
+            this->checkForVSim();
+        }
+    }
+}
+
+bool DCServices::checkForVSim()
+{
+    char encodedVSim[64];
+    unsigned long startTime = millis();
+    uint8_t ix = 0;
+
+    if (Serial.peek() == 'V')
+    {
+        Serial.read();
+
+        while (true)
+        {
+            if (millis() - startTime > 1000)
+            {
+                Serial.println("vSIM ERROR");
+                return;
+            }
+
+            while (Serial.available())
+            {
+                encodedVSim[ix++] = Serial.read();
+            }
+
+            if (Base64.decodedLength(encodedVSim, ix) == VSIM_DECODED_LEN)
+            {
+                uint8_t decodedVSim[VSIM_DECODED_LEN];
+                Base64.decode(decodedVSim, encodedVSim, ix);
+                eeprom_write_block(decodedVSim, DCCORE_EEPROM_VSIM_BASE, VSIM_DECODED_LEN);
+                Serial.println("vSIM OK");
+
+                return;
+            }
+        }
+    }
 }

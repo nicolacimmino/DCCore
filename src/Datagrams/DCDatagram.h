@@ -5,7 +5,8 @@
 #include <Arduino.h>
 #include "../sha256.h"
 
-#define DCCORE_EEPROM_HMAC_KEY 0
+#define DCCORE_EEPROM_VSIM_BASE 0
+#define DCCORE_EEPROM_HMAC_KEY 1
 #define DCCORE_EEPROM_HMAC_KEY_LEN 8
 #define DC_DATAGRAM_HEADER_LEN 6
 

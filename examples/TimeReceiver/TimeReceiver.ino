@@ -16,6 +16,8 @@ void setup()
 
 void loop()
 {
+  dcServices->loop();
+
   DateTime *dateTime = new DateTime();
 
   if (dcServices->receiveTimeBroadcast(dateTime))
@@ -31,12 +33,6 @@ void loop()
         );
     Serial.println(buf);
   }
-  else
-  {
-    //Serial.println("Error");
-  }
-
-  delete dateTime;
-
-  //delay(200);
+  
+  delete dateTime;  
 }

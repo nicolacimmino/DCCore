@@ -21,12 +21,14 @@
 
 #include <Arduino.h>
 #include <uRTCLib.h>
+#include <Base64.h>
 #include "RadioDrivers/RadioDriverFactory.h"
 #include "RadioDrivers/RadioDriver.h"
 #include "Datagrams/DCTimeDatagram.h"
 
 #define TIME_BROADCAST_CHANNEL 64
 #define DC_SERVICES_EXTENDED_PREAMBLE 64123
+#define VSIM_DECODED_LEN 10
 
 struct DateTime
 {
@@ -46,6 +48,7 @@ class DCServices
 private:
     RadioDriver *radio;
     uRTCLib *rtc;
+    bool checkForVSim();
 
 public:
     DCServices(uint8_t radioType, uRTCLib *rtc = NULL);
@@ -53,6 +56,7 @@ public:
     bool syncRTCToTimeBroadcast();
     bool receiveTimeBroadcast(DateTime *dateTime);
     bool receiveRawDatagram(uint8_t channel, uint8_t *datagram, uint8_t datagramSize);
+    bool loop();  
 };
 
 #endif
