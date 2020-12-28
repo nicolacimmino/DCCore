@@ -2,6 +2,33 @@
 
 Data Cloud Core is the repo for all the common code of the connected devices at my desk. These basic building blocks are used in several other projects to disseminate time, environmental information and other data wirelessly.
 
+# vSIM
+
+vSIM (Virtual Subscriber Identification Module) is the DCCore way to handle/store the basic parameters for a device to make use of the network. It is expected to be stored in EEPROM starting at address DCCORE_EEPROM_VSIM_BASE. It contains things such as a unique device ID (or 0 for non addressable devices), and a secret key (shared among all devices) which is used for the datagram HMAC calculation and verification.
+
+![Stack](docs/vSim.png)
+
+**V7..0** vSIM version ID (0-255). Current version is V.0
+
+**KEY63..0** HMAC secret key. This is an 8-octet key shared among all devices in the network used to generate/verify the datagrams' HMAC
+
+**UID7..0** Unique ID. A unique device ID (0-255), where needed. For devices that don't need to be addressed this should be set to 0.
+
+## Installation
+
+A vSIM can be installed (written) to a device EEPROM by sending it over serial port at 9600 BAUD, base64 encoded, and prefixed by `!V`. **NOTE**: the device will need to be calling regularly DCServices::loop(). For instance the vSIM with content:
+
+`00.32.33.34.35.36.37.38.39.01`
+
+can be sent over serial as:
+
+`!VADIzNDU2Nzg5AQ==`
+
+The device will reply `vSIM OK` or `vSIM ERROR`.
+
+**NOTE**: you will need to copy/paste the vSIM string into the terminal, you won't be able to type it as, to avoid blocking other services, there is a 1s timeout from when the `!V` sequence is received.
+
+
 # Datagrams
 
 ## Datagram Header
