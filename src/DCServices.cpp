@@ -133,11 +133,11 @@ bool DCServices::checkForVSim()
                 encodedVSim[ix++] = Serial.read();
             }
 
-            if (Base64.decodedLength(encodedVSim, ix) == VSIM_DECODED_LEN)
+            if (Base64.decodedLength(encodedVSim, ix) == DCCORE_EEPROM_VSIM_LEN)
             {
-                uint8_t decodedVSim[VSIM_DECODED_LEN];
+                uint8_t decodedVSim[DCCORE_EEPROM_VSIM_LEN];
                 Base64.decode(decodedVSim, encodedVSim, ix);
-                eeprom_write_block(decodedVSim, DCCORE_EEPROM_VSIM_BASE, VSIM_DECODED_LEN);
+                eeprom_write_block(decodedVSim, DCCORE_EEPROM_VSIM_BASE, DCCORE_EEPROM_VSIM_LEN);
                 Serial.println("vSIM OK");
 
                 return;

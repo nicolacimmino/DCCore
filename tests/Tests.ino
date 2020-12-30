@@ -9,7 +9,15 @@ void setup()
     proboInit(&Serial, false);
 }
 
-// TODO: add pre-requiste tests (eg valid vsim)
+void validateVSim()
+{
+    uint8_t expectedVSim[] = {0x00, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x01};
+    uint8_t actualVSim[DCCORE_EEPROM_VSIM_LEN];
+
+    eeprom_read_block(actualVSim, DCCORE_EEPROM_VSIM_BASE, DCCORE_EEPROM_VSIM_LEN);
+
+    proboAssertBuffersEqual(expectedVSim, actualVSim, DCCORE_EEPROM_VSIM_LEN, "vSIM");
+}
 
 void testTimeDatagramIsValid()
 {
@@ -24,7 +32,7 @@ void testTimeDatagramIsValid()
 
     // Assert
     proboAssertTrue(DCTimeDatagram::verifyHMAC(datagram), "HMAC Valid");
-    proboAssertBuffersEqual(expectedDatagram, datagram, DC_TIME_DATAGRAM_LEN , "Datagram");
+    proboAssertBuffersEqual(expectedDatagram, datagram, DC_TIME_DATAGRAM_LEN, "Datagram");
 }
 
 void testInvalidCRCShouldFail()
@@ -44,6 +52,10 @@ void testInvalidCRCShouldFail()
 
 void loop()
 {
+    // Preconditions
+    validateVSim();
+
+    // Actual tests
     testInvalidCRCShouldFail();
     testTimeDatagramIsValid();
     proboFinalise();
