@@ -10,8 +10,8 @@ void DCDatagram::buildHeader(uint8_t *datagram, uint8_t datagramId, uint8_t data
 /**********************************************************************************************************
  * calculateHMAC
  * 
- * The HMAC is initialized with the 8-octet key stored in EEPROM at DCCORE_EEPROM_HMAC_KEY. The HMAC is   
- * then calculated on the all the header octets (except the ones reserved for the HMAC) followed by all
+ * The HMAC is initialized with the 8-octet key stored in vSIM at DCCORE_EEPROM_HMAC_KEY. The HMAC is   
+ * then calculated on all the header octets (except the ones reserved for the HMAC) followed by all
  * the octets of the payload. The final HMAC is truncated to 4 octets.
  * 
  */
